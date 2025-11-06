@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "paciente_id": 3,
+    "medico_id": 2,
+    "inicio": "2025-11-07 08:00",
+    "fim": "2025-11-07 08:56",
+    "duracao_min": 56,
+    "status": "agendada"
+  }
+]
