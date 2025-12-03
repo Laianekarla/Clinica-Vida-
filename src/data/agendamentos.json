@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "paciente_id": 3,
+        "medico_id": 2,
+        "inicio": "2025-11-07 08:00",
+        "fim": "2025-11-07 08:56",
+        "duracao_min": 56,
+        "status": "agendada"
+    },
+    {
+        "id": 2,
+        "paciente_id": 3,
+        "medico_id": 3,
+        "inicio": "2025-11-10 09:30",
+        "fim": "2025-11-10 10:29",
+        "duracao_min": 59,
+        "status": "agendada"
+    },
+    {
+        "id": 3,
+        "paciente_id": 2,
+        "medico_id": 5,
+        "inicio": "2025-11-12 08:30",
+        "fim": "2025-11-12 09:30",
+        "duracao_min": 60,
+        "status": "agendada",
+        "tipo": "emergencia"
+    },
+    {
+        "id": 4,
+        "cpf_paciente": "05407270242",
+        "crm_medico": "12345",
+        "tipo": "Normal",
+        "status": "Agendado"
+    }
+]

@@ -1,0 +1,12 @@
+=== RECEITA MÉDICA ===
+ID Receita: 1
+Data: 2025-11-08 14:51
+Médico: José Felippo
+Paciente: Laiane Karla
+
+Título: relaxante muscular
+
+Prescrição:
+tomar 1x ao dia
+
+-- Fim da receita --

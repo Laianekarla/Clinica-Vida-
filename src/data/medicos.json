@@ -1,0 +1,56 @@
+[
+    {
+        "id": 2,
+        "nome": "Sarah Fernanda",
+        "especialidade": "Nutricionista",
+        "crm": "23453"
+    },
+    {
+        "id": 3,
+        "nome": "Anderson Voschott",
+        "especialidade": "Clínico Geral",
+        "crm": "12345"
+    },
+    {
+        "id": 4,
+        "nome": "Pietra Vieira",
+        "especialidade": "Ginecologista",
+        "crm": "954840"
+    },
+    {
+        "id": 5,
+        "nome": "Eduardo Vangog",
+        "especialidade": "Otorrinolaringologista",
+        "crm": "12345"
+    },
+    {
+        "id": 6,
+        "nome": "Thais Cassino",
+        "especialidade": "Psiquiatra",
+        "crm": "12345"
+    },
+    {
+        "crm": "784000",
+        "nome": "Pedro Bial",
+        "especialidade": "Cardiologista",
+        "disponivel": true
+    },
+    {
+        "crm": "000124",
+        "nome": "Litor Averlario",
+        "especialidade": "Pediatra",
+        "disponivel": true
+    },
+    {
+        "crm": "789",
+        "nome": "Augusto",
+        "especialidade": "Odontologia",
+        "disponivel": true
+    },
+    {
+        "crm": "1234",
+        "nome": "Priscila Amanda",
+        "especialidade": "Nutricionista",
+        "disponivel": true
+    }
+]
