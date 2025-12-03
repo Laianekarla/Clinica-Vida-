@@ -10,5 +10,9 @@
     {
         "agendamento_id": 1,
         "texto": "--- RECEITA MÉDICA ---\nPaciente: Laiane\nCPF: \nMédico: Jose Dias\nData/Hora: 2025-12-04 08:00\nTipo: NORMAL\nObservações / Orientações: tomar medicação X 2x ao dia\nAssinatura: ____\n"
+    },
+    {
+        "agendamento_id": 1,
+        "texto": "--- RECEITA MÉDICA ---\nPaciente: Laiane\nCPF: \nMédico: Jose Dias\nData/Hora: 2025-12-04 08:00\nTipo: NORMAL\nObservações / Orientações: TOMAR MEDICAÇÃO 3X AO DIA\nAssinatura: ____\n"
     }
 ]

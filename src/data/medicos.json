@@ -8,5 +8,10 @@
         "id": 2,
         "nome": "Edson Andrade",
         "especialidade": "Nutricionista"
+    },
+    {
+        "id": 3,
+        "nome": "Ulisses",
+        "especialidade": "Psiquiatra"
     }
 ]
