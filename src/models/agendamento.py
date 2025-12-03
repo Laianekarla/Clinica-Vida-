@@ -1,16 +1,25 @@
-class Agendamento:
-    def __init__(self, id, cpf_paciente, crm_medico, tipo):
-        self.id = id  # número sequencial
-        self.cpf_paciente = cpf_paciente
-        self.crm_medico = crm_medico
-        self.tipo = tipo  # "Normal" ou "Emergência"
-        self.status = "Agendado"  # Pode mudar depois (Cancelado / Atendido)
+from dataclasses import dataclass, asdict
+from typing import Dict
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "cpf_paciente": self.cpf_paciente,
-            "crm_medico": self.crm_medico,
-            "tipo": self.tipo,
-            "status": self.status
-        }
+@dataclass
+class Agendamento:
+    id: int
+    paciente_id: int
+    medico_id: int
+    data_hora: str
+    tipo: str  # "NORMAL" ou "EMERGÊNCIA"
+    confirmado: bool = False
+
+    def to_dict(self) -> Dict:
+        return asdict(self)
+
+    @staticmethod
+    def from_dict(d: Dict):
+        return Agendamento(
+            id=d.get("id"),
+            paciente_id=d.get("paciente_id"),
+            medico_id=d.get("medico_id"),
+            data_hora=d.get("data_hora"),
+            tipo=d.get("tipo"),
+            confirmado=d.get("confirmado", False)
+        )

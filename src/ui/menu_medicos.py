@@ -1,42 +1,31 @@
-from controllers.medicos_controller import (
-    cadastrar_medico,
-    buscar_medico,
-    listar_medicos,
-    editar_medico,
-    excluir_medico,
-    cancelar_agendamento_medico,
-    gerar_receita_medico
-)
+from controllers.agendamentos_controller import gerar_receita_por_agendamento
+from controllers.medicos_controller import listar_medicos
 
 def menu_medicos():
     while True:
-        print("\n--- MENU MÉDICOS ---")
-        print("1 - Cadastrar Médico")
-        print("2 - Buscar Médico")
-        print("3 - Listar Médicos")
-        print("4 - Editar Médico")
-        print("5 - Excluir Médico")
-        print("6 - Cancelar Agendamento como Médico")
-        print("7 - Gerar Receita como Médico")
-        print("0 - Voltar")
-
-        escolha = input("Escolha: ").strip()
-
-        if escolha == "1":
-            cadastrar_medico()
-        elif escolha == "2":
-            buscar_medico()
-        elif escolha == "3":
-            listar_medicos()
-        elif escolha == "4":
-            editar_medico()
-        elif escolha == "5":
-            excluir_medico()
-        elif escolha == "6":
-            cancelar_agendamento_medico()
-        elif escolha == "7":
-            gerar_receita_medico()
-        elif escolha == "0":
+        print("""
+--- Médicos ---
+1 - Cadastrar médico
+2 - Listar médicos
+3 - Gerar receita para agendamento
+0 - Voltar
+""")
+        opc = input("Escolha: ").strip()
+        if opc == "1":
+            # código de cadastro de médico
+            pass
+        elif opc == "2":
+            for m in listar_medicos():
+                print(f"{m.id} - {m.nome} - {m.especialidade}")
+        elif opc == "3":
+            aid = int(input("ID do agendamento para gerar receita: "))
+            texto = gerar_receita_por_agendamento(aid)
+            if texto:
+                print(texto)
+                print("[Receita salva em data/receitas.json]\n")
+            else:
+                print("❌ Agendamento não encontrado.\n")
+        elif opc == "0":
             break
         else:
-            print("❌ Opção inválida! Tente novamente.")
+            print("❌ Opção inválida.\n")

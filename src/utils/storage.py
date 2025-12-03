@@ -3,6 +3,10 @@ import os
 
 BASE_PATH = os.path.join(os.getcwd(), "src", "data")
 
+# Garante que a pasta exista
+if not os.path.exists(BASE_PATH):
+    os.makedirs(BASE_PATH)
+
 def carregar_json(nome_arquivo):
     caminho = os.path.join(BASE_PATH, nome_arquivo)
 
@@ -14,7 +18,6 @@ def carregar_json(nome_arquivo):
             return json.load(f)
         except json.JSONDecodeError:
             return []
-
 
 def salvar_json(nome_arquivo, dados):
     caminho = os.path.join(BASE_PATH, nome_arquivo)

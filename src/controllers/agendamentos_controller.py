@@ -1,191 +1,90 @@
-from utils.storage import carregar_json, salvar_json
+from typing import List, Optional
 from models.agendamento import Agendamento
-
-def gerar_id_agendamento():
-    ag = carregar_json("agendamentos.json")
-    return len(ag) + 1
-
-def cadastrar_agendamento():
-    cpf = input("CPF do Paciente: ")
-    crm = input("CRM do Médico: ")
-    tipo = input("Tipo (1 - Normal | 2 - Emergência): ")
-
-    tipo = "Normal" if tipo == "1" else "Emergência"
-
-    agendamentos = carregar_json("agendamentos.json")
-
-    novo = Agendamento(gerar_id_agendamento(), cpf, crm, tipo)
-    agendamentos.append(novo.to_dict())
-    salvar_json("agendamentos.json", agendamentos)
-
-    print("✅ Consulta agendada com sucesso!")
-
-def listar_agendamentos():
-    agendamentos = carregar_json("agendamentos.json")
-
-    if not agendamentos:
-        print("Nenhum agendamento encontrado.")
-        return
-
-    print("\n--- Lista de Agendamentos ---")
-    for a in agendamentos:
-        print(f"ID {a['id']} | Paciente {a['cpf_paciente']} | Médico {a['crm_medico']} | {a['tipo']} | {a['status']}")
-
-import json
-import os
-from models.medico import Medico
 from utils.storage import carregar_json, salvar_json
+from controllers.pacientes_controller import obter_por_id as paciente_por_id
 
-DATA_FILE = os.path.join("src", "data", "medicos.json")
+ARQ = "agendamento.json"
 
-def carregar_medicos():
-    if not os.path.exists(DATA_FILE):
-        return []
-    with open(DATA_FILE, "r", encoding="utf-8") as file:
-        try:
-            return json.load(file)
-        except json.JSONDecodeError:
-            return []
+def _load_all() -> List[Agendamento]:
+    raw = carregar_json(ARQ)
+    return [Agendamento.from_dict(x) for x in raw]
 
-def salvar_medicos(medicos):
-    with open(DATA_FILE, "w", encoding="utf-8") as file:
-        json.dump(medicos, file, indent=4, ensure_ascii=False)
+def _save_all(ags: List[Agendamento]):
+    salvar_json(ARQ, [a.to_dict() for a in ags])
 
-# ✅ CADASTRAR
-def cadastrar_medico():
-    crm = input("CRM: ").strip()
-    nome = input("Nome: ").strip()
-    especialidade = input("Especialidade: ").strip()
+def _next_id(ags: List[Agendamento]) -> int:
+    if not ags:
+        return 1
+    return max(a.id for a in ags) + 1
 
-    medicos = carregar_medicos()
-    for m in medicos:
-        if m["crm"] == crm:
-            print("⚠️ Já existe um médico cadastrado com esse CRM!")
-            return
+def listar_agendamentos() -> List[Agendamento]:
+    return _load_all()
 
-    novo = Medico(crm, nome, especialidade)
-    medicos.append(novo.to_dict())
-    salvar_medicos(medicos)
-    print("✅ Médico cadastrado com sucesso!")
+def agendar_consulta(paciente_id: int, medico_id: int, data_hora: str, tipo: str) -> Optional[Agendamento]:
+    if not paciente_por_id(paciente_id):
+        return None
+    ags = _load_all()
+    nid = _next_id(ags)
+    ag = Agendamento(id=nid, paciente_id=paciente_id, medico_id=medico_id,
+                     data_hora=data_hora, tipo=tipo.upper(), confirmado=False)
+    ags.append(ag)
+    _save_all(ags)
+    return ag
 
-# ✅ LISTAR
-def listar_medicos():
-    medicos = carregar_medicos()
-    if not medicos:
-        print("📭 Nenhum médico cadastrado!")
-        return
+def confirmar_agendamento(aid: int) -> bool:
+    ags = _load_all()
+    for ag in ags:
+        if ag.id == aid:
+            ag.confirmado = True
+            _save_all(ags)
+            return True
+    return False
 
-    print("\n📋 Lista de Médicos:")
-    for m in medicos:
-        print(f"- {m['nome']} | CRM: {m['crm']} | Especialidade: {m['especialidade']}")
+def cancelar_agendamento(aid: int) -> bool:
+    ags = _load_all()
+    novos = [a for a in ags if a.id != aid]
+    if len(novos) == len(ags):
+        return False
+    _save_all(novos)
+    return True
 
-# ✅ BUSCAR
-def buscar_medico():
-    nome = input("Digite o nome do médico: ").strip().lower()
-    medicos = carregar_medicos()
-    encontrados = [m for m in medicos if nome in m["nome"].lower()]
+def gerar_receita_por_agendamento(aid: int) -> Optional[str]:
+    """
+    Função para gerar receita, chamada somente pelo menu de médicos.
+    Permite o médico adicionar observações / orientações para o paciente.
+    Lazy import para evitar import circular.
+    """
+    from controllers.medicos_controller import obter_por_id as medico_por_id
+    from utils.storage import carregar_json, salvar_json
 
-    if not encontrados:
-        print("❌ Nenhum médico encontrado!")
-        return
+    RECEITAS_ARQ = "receitas.json"
 
-    print("\n🔍 Resultados da busca:")
-    for m in encontrados:
-        print(f"{m['nome']} | CRM: {m['crm']} | Especialidade: {m['especialidade']}")
+    ags = _load_all()
+    ag = next((a for a in ags if a.id == aid), None)
+    if not ag:
+        return None
 
-# ✅ EDITAR
-def editar_medico():
-    try:
-        id_busca = int(input("Digite o ID do médico a ser editado: ").strip())
-    except ValueError:
-        print("❌ ID inválido!")
-        return
+    paciente = paciente_por_id(ag.paciente_id)
+    medico = medico_por_id(ag.medico_id)
 
-    medicos = carregar_medicos()
-    for m in medicos:
-        if m.get("id") == id_busca:
-            print(f"Editando: {m.get('nome')}")
-            novo_nome = input("Novo nome (Enter para manter): ").strip()
-            nova_esp = input("Nova especialidade (Enter para manter): ").strip()
-            if novo_nome != "":
-                m["nome"] = novo_nome
-            if nova_esp != "":
-                m["especialidade"] = nova_esp
-            salvar_medicos(medicos)
-            print("✅ Médico atualizado com sucesso!")
-            return
+    # Solicitar observações do médico
+    observacoes = input("Digite observações / orientações médicas para o paciente: ").strip()
 
-    print("❌ Médico não encontrado!")
+    texto = (
+        f"--- RECEITA MÉDICA ---\n"
+        f"Paciente: {paciente.nome if paciente else 'N/D'}\n"
+        f"CPF: {getattr(paciente,'cpf','') if paciente else ''}\n"
+        f"Médico: {medico.nome if medico else 'N/D'}\n"
+        f"Data/Hora: {ag.data_hora}\n"
+        f"Tipo: {ag.tipo}\n"
+        f"Observações / Orientações: {observacoes}\n"
+        f"Assinatura: ____\n"
+    )
 
-# ✅ EXCLUIR
-def excluir_medico():
-    try:
-        id_busca = int(input("Digite o ID do médico a excluir: ").strip())
-    except ValueError:
-        print("❌ ID inválido!")
-        return
+    # Salvar no arquivo receitas.json
+    receitas = carregar_json(RECEITAS_ARQ)
+    receitas.append({"agendamento_id": ag.id, "texto": texto})
+    salvar_json(RECEITAS_ARQ, receitas)
 
-    medicos = carregar_medicos()
-    for m in medicos:
-        if m.get("id") == id_busca:
-            medicos.remove(m)
-            salvar_medicos(medicos)
-            print("🗑️ Médico excluído com sucesso!")
-            return
-
-    print("❌ Médico não encontrado!")
-
-# ✅ CANCELAR AGENDAMENTO COMO MÉDICO (simulação)
-def cancelar_agendamento_medico():
-    try:
-        id_medico = int(input("Digite seu ID de médico: ").strip())
-    except ValueError:
-        print("❌ ID inválido!")
-        return
-
-    agendamentos = carregar_json("agendamentos.json")
-    meus_agendamentos = [a for a in agendamentos if a["medico_id"] == id_medico and a["status"] == "Agendado"]
-
-    if not meus_agendamentos:
-        print("❌ Nenhum agendamento ativo encontrado para este médico.")
-        return
-
-    print("\n📋 Seus agendamentos ativos:")
-    for a in meus_agendamentos:
-        print(f"ID Agendamento: {a['id']} | Paciente ID: {a['paciente_id']} | Início: {a['inicio']} | Fim: {a['fim']}")
-
-    try:
-        id_ag = int(input("Digite o ID do agendamento que deseja cancelar: ").strip())
-    except ValueError:
-        print("❌ ID inválido!")
-        return
-
-    for a in meus_agendamentos:
-        if a["id"] == id_ag:
-            a["status"] = "Cancelado"
-            salvar_json("agendamentos.json", agendamentos)
-            print("✅ Agendamento cancelado com sucesso!")
-            return
-
-    print("❌ Agendamento não encontrado.")
-
-# ✅ GERAR RECEITA COMO MÉDICO (simulação)
-def gerar_receita_medico():
-    try:
-        id_medico = int(input("Digite seu ID de médico: ").strip())
-    except ValueError:
-        print("❌ ID inválido!")
-        return
-
-    # Simulação: pedir informações do paciente e medicação
-    id_paciente = input("Digite o ID do paciente: ").strip()
-    medicacao = input("Digite a medicação prescrita: ").strip()
-    dosagem = input("Digite a dosagem: ").strip()
-    observacoes = input("Observações adicionais: ").strip()
-
-    print("\n📝 Receita gerada com sucesso!")
-    print(f"Médico ID: {id_medico}")
-    print(f"Paciente ID: {id_paciente}")
-    print(f"Medicação: {medicacao}")
-    print(f"Dosagem: {dosagem}")
-    print(f"Observações: {observacoes}")   
+    # Retorna o texto da receita para impressão
+    return texto

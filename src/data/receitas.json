@@ -1,10 +1,14 @@
 [
-  {
-    "id": 1,
-    "paciente_id": 1,
-    "medico_id": 1,
-    "titulo": "relaxante muscular",
-    "texto": "tomar 1x ao dia",
-    "data": "2025-11-08 14:51"
-  }
+    {
+        "agendamento_id": 1,
+        "texto": "--- RECEITA MÉDICA ---\nPaciente: Laiane\nCPF: \nMédico: Jose Dias\nData/Hora: 2025-12-04 08:00\nTipo: NORMAL\nAssinatura: ________\n"
+    },
+    {
+        "agendamento_id": 1,
+        "texto": "--- RECEITA MÉDICA ---\nPaciente: Laiane\nCPF: \nMédico: Jose Dias\nData/Hora: 2025-12-04 08:00\nTipo: NORMAL\nAssinatura: ____\n"
+    },
+    {
+        "agendamento_id": 1,
+        "texto": "--- RECEITA MÉDICA ---\nPaciente: Laiane\nCPF: \nMédico: Jose Dias\nData/Hora: 2025-12-04 08:00\nTipo: NORMAL\nObservações / Orientações: tomar medicação X 2x ao dia\nAssinatura: ____\n"
+    }
 ]

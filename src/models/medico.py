@@ -1,14 +1,19 @@
-class Medico:
-    def __init__(self, crm, nome, especialidade):
-        self.crm = crm
-        self.nome = nome
-        self.especialidade = especialidade
-        self.disponivel = True  # médico pode estar disponível ou não
+from dataclasses import dataclass, asdict
+from typing import Dict
 
-    def to_dict(self):
-        return {
-            "crm": self.crm,
-            "nome": self.nome,
-            "especialidade": self.especialidade,
-            "disponivel": self.disponivel
-        }
+@dataclass
+class Medico:
+    id: int
+    nome: str
+    especialidade: str
+
+    def to_dict(self) -> Dict:
+        return asdict(self)
+
+    @staticmethod
+    def from_dict(d: Dict):
+        return Medico(
+            id=d.get("id"),
+            nome=d.get("nome"),
+            especialidade=d.get("especialidade", "")
+        )

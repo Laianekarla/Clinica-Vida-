@@ -1,12 +1,23 @@
-class Paciente:
-    def __init__(self, cpf, nome, idade):
-        self.cpf = cpf
-        self.nome = nome
-        self.idade = idade
+from dataclasses import dataclass, asdict
+from typing import Dict
 
-    def to_dict(self):
-        return {
-            "cpf": self.cpf,
-            "nome": self.nome,
-            "idade": self.idade
-        }
+@dataclass
+class Paciente:
+    id: int
+    nome: str
+    idade: int
+    telefone: str
+    cpf: str = ""
+
+    def to_dict(self) -> Dict:
+        return asdict(self)
+
+    @staticmethod
+    def from_dict(d: Dict):
+        return Paciente(
+            id=d.get("id"),
+            nome=d.get("nome"),
+            idade=d.get("idade"),
+            telefone=d.get("telefone"),
+            cpf=d.get("cpf", "")
+        )
